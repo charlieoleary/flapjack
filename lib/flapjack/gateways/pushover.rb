@@ -144,7 +144,7 @@ module Flapjack
           @logger.debug "Sent message via Pushover - response status is #{status}, #{http.response}."
         else
           @logger.error "Failed to send message via Pushover - response status is #{status}, #{http.response}."
-        ends
+        end
       rescue => e
         @logger.error "Error generating or delivering Pushover messsage: #{e.message}"
         @logger.error e.backtrace.join("\n")
