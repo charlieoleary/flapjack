@@ -469,6 +469,8 @@ development:
       logger:
         level: DEBUG
         syslog_errors: yes
+    # Support for notifications via Pushover
+    # https://pushover.net/api
     pushover:
       enabled: yes
       queue: pushover_notifications
@@ -476,9 +478,13 @@ development:
         level: DEBUG
         syslog_errors: yes
       endpoint: "https://api.pushover.net/1/messages.json"
+      # The application key for your Pushover application
       app_key: "111111111111111111111111111111"
+      # A valid user key for your Pushover account
       usr_key: "000000000000000000000000000000"
+      # Number of seconds until an emergency / critical alert stops resending without acknowledgement
       emergency_expire: 600
+      # Number of seconds until an unacknowledged emergency / critical alert resends
       emergency_retry: 60
       # location of custom alert templates
       #templates:
