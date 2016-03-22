@@ -62,7 +62,7 @@ module Flapjack
         channel         = "##{alert.address}"
         channel         = '#general' if (channel.size == 1)
         notification_id = alert.notification_id
-        message_type    = alert.rollup ? '-1' : '1'
+        message_type    = alert.rollup ? 'rollup' : 'alert'
 
         if alert.state == "ok" and alert.notification_type == "recovery"
           message_color = "#00ff00"
@@ -84,8 +84,20 @@ module Flapjack
         @logger.info "Notification type is #{alert.notification_type}, state is #{alert.state}."
         @logger.info "Message color is #{message_color} with priority #{message_priority}"
 
+        pushover_template_erb, pushover_template =
+          load_template(@config['templates'], message_type, 'text',
+                        File.join(File.dirname(__FILE__), 'pushover'))
+
         @alert  = alert
         bnd     = binding
+
+        begin
+          alert_message = pushover_template_erb.result(bnd).chomp
+        rescue => e
+          @logger.error "Error while executing the ERB for Pushover: " +
+            "ERB being executed: #{pushover_template}"
+          raise
+        end
 
         errors = []
 
@@ -104,11 +116,11 @@ module Flapjack
           return
         end
 
-        if alert.notification_type != "acknowledgement"
-          alert_message = "#{alert.type_sentence_case}: '#{alert.check}' on #{alert.entity} is #{alert.state_title_case} at #{Time.at(@alert.time).strftime('%-d %b %H:%M')}."
-        else
-          alert_message = "#{alert.type_sentence_case}: '#{alert.check}' on #{alert.entity}"
-        end
+        # if alert.notification_type != "acknowledgement"
+        #   alert_message = "#{alert.type_sentence_case}: '#{alert.check}' on #{alert.entity} is #{alert.state_title_case} at #{Time.at(@alert.time).strftime('%-d %b %H:%M')}."
+        # else
+        #   alert_message = "#{alert.type_sentence_case}: '#{alert.check}' on #{alert.entity}"
+        # end
 
         pushover_message = {
           "token"     => app_key,
@@ -132,7 +144,7 @@ module Flapjack
           @logger.debug "Sent message via Pushover - response status is #{status}, #{http.response}."
         else
           @logger.error "Failed to send message via Pushover - response status is #{status}, #{http.response}."
-        end
+        ends
       rescue => e
         @logger.error "Error generating or delivering Pushover messsage: #{e.message}"
         @logger.error e.backtrace.join("\n")

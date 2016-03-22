@@ -45,6 +45,7 @@ production:
     sns_queue: sns_notifications
     jabber_queue: jabber_notifications
     pagerduty_queue: pagerduty_notifications
+    pushover_queue: pushover_notifications
     notification_log_file: /var/log/flapjack/notification.log
     default_contact_timezone: UTC
     logger:
@@ -468,6 +469,21 @@ development:
       logger:
         level: DEBUG
         syslog_errors: yes
+    pushover:
+      enabled: yes
+      queue: pushover_notifications
+      logger:
+        level: DEBUG
+        syslog_errors: yes
+      endpoint: "https://api.pushover.net/1/messages.json"
+      app_key: "111111111111111111111111111111"
+      usr_key: "000000000000000000000000000000"
+      emergency_expire: 600
+      emergency_retry: 60
+      # location of custom alert templates
+      #templates:
+      #  rollup.text: '/etc/flapjack/templates/slack/rollup.text.erb'
+      #  alert.text: '/etc/flapjack/templates/slack/alert.text.erb'
 
 test:
   pid_dir: tmp/pids/
