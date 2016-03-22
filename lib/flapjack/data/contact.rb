@@ -29,7 +29,8 @@ module Flapjack
         'sms_nexmo',
         'jabber',
         'pagerduty',
-        'sns'
+        'sns',
+        'pushover'
       ]
 
       def self.all(options = {})
